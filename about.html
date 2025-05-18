@@ -1,0 +1,103 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>درباره ما | VPN پرسرعت</title>
+    <link href="https://v1.fontapi.ir/css/Vazir" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Vazir', sans-serif; background: #f5f5f5; color: #333; }
+        .navbar { background: #003087; padding: 15px 0; position: sticky; top: 0; z-index: 1000; }
+        .navbar .container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .navbar a { color: white; text-decoration: none; margin: 0 15px; font-size: 1.1em; }
+        .navbar a:hover { color: #f90; }
+        .navbar .logo { font-size: 1.5em; font-weight: bold; }
+        .hamburger { display: none; cursor: pointer; }
+        .hamburger span { display: block; width: 25px; height: 3px; background: white; margin: 5px 0; }
+        .about { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .about h1 { font-size: 2em; color: #003087; text-align: center; margin-bottom: 20px; }
+        .about p { font-size: 1.1em; line-height: 1.8; color: #555; margin-bottom: 20px; }
+        footer { background: #003087; color: white; text-align: center; padding: 20px; margin-top: 40px; }
+        footer a { color: #f90; text-decoration: none; margin: 0 10px; }
+        @media (max-width: 768px) {
+            .navbar .menu { display: none; }
+            .navbar .menu.active { display: block; position: absolute; top: 60px; right: 0; background: #003087; width: 100%; text-align: center; padding: 20px 0; }
+            .hamburger { display: block; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">VPN پرسرعت</a>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu">
+                <a href="index.html">خانه</a>
+                <a href="about.html">درباره ما</a>
+                <a href="plans.html">پلن‌ها</a>
+                <a href="speed-test.html">تست سرعت</a>
+                <a href="contact.html">تماس با ما</a>
+            </div>
+        </div>
+    </nav>
+    <section class="about">
+        <h1>درباره ما</h1>
+        <p>ما در VPN پرسرعت، با هدف ارائه اینترنت امن و پرسرعت به کاربران ایرانی و بین‌المللی فعالیت می‌کنیم. سرورهای ما با آی‌پی ثابت و پشتیبانی از ۵ سشن همزمان، برای ترید، گیمینگ و وب‌گردی طراحی شده‌اند.</p>
+        <p>تیم ما متشکل از متخصصان فناوری اطلاعات است که ۲۴ ساعته آماده پشتیبانی شما هستند. هدف ما، تجربه‌ای بی‌دردسر و مطمئن از VPN است.</p>
+    </section>
+    <footer>
+        <p>پشتیبانی ۲۴ ساعته: <a href="tel:+989123456789">09123456789</a> | <a href="mailto:support@vpnfast.ir">support@vpnfast.ir</a></p>
+        <p><a href="about.html">درباره ما</a> | <a href="contact.html">تماس با ما</a></p>
+        <p>© 2025 VPN پرسرعت</p>
+    </footer>
+    <script>
+        function toggleMenu() {
+            document.querySelector('.menu').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

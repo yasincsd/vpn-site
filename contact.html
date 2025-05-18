@@ -1,0 +1,122 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تماس با ما | VPN پرسرعت</title>
+    <link href="https://v1.fontapi.ir/css/Vazir" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Vazir', sans-serif; background: #f5f5f5; color: #333; }
+        .navbar { background: #003087; padding: 15px 0; position: sticky; top: 0; z-index: 1000; }
+        .navbar .container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .navbar a { color: white; text-decoration: none; margin: 0 15px; font-size: 1.1em; }
+        .navbar a:hover { color: #f90; }
+        .navbar .logo { font-size: 1.5em; font-weight: bold; }
+        .hamburger { display: none; cursor: pointer; }
+        .hamburger span { display: block; width: 25px; height: 3px; background: white; margin: 5px 0; }
+        .contact { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .contact h1 { font-size: 2em; color: #003087; text-align: center; margin-bottom: 20px; }
+        .contact-box { background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .contact-box p { font-size: 1.1em; color: #555; margin-bottom: 20px; text-align: center; }
+        .contact-form { max-width: 600px; margin: 0 auto; }
+        .contact-form label { display: block; font-size: 1em; color: #333; margin-bottom: 5px; }
+        .contact-form input, .contact-form textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; }
+        .btn { background: #f90; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-size: 1.1em; transition: background 0.3s; border: none; cursor: pointer; }
+        .btn:hover { background: #e68a00; }
+        footer { background: #003087; color: white; text-align: center; padding: 20px; margin-top: 40px; }
+        footer a { color: #f90; text-decoration: none; margin: 0 10px; }
+        @media (max-width: 768px) {
+            .navbar .menu { display: none; }
+            .navbar .menu.active { display: block; position: absolute; top: 60px; right: 0; background: #003087; width: 100%; text-align: center; padding: 20px 0; }
+            .hamburger { display: block; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">VPN پرسرعت</a>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="menu">
+                <a href="index.html">خانه</a>
+                <a href="about.html">درباره ما</a>
+                <a href="plans.html">پلن‌ها</a>
+                <a href="speed-test.html">تست سرعت</a>
+                <a href="contact.html">تماس با ما</a>
+            </div>
+        </div>
+    </nav>
+    <section class="contact">
+        <h1>تماس با ما</h1>
+        <div class="contact-box">
+            <p>سوالی دارید؟ با ما در ارتباط باشید!</p>
+            <div class="contact-form">
+                <label for="name">نام</label>
+                <input type="text" id="name" placeholder="نام شما" required>
+                <label for="email">ایمیل</label>
+                <input type="email" id="email" placeholder="ایمیل شما" required>
+                <label for="message">پیام</label>
+                <textarea id="message" rows="5" placeholder="پیام خود را بنویسید" required></textarea>
+                <button class="btn" onclick="sendMessage()">ارسال پیام</button>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <p>پشتیبانی ۲۴ ساعته: <a href="tel:+989123456789">09123456789</a> | <a href="mailto:support@vpnfast.ir">support@vpnfast.ir</a></p>
+        <p><a href="about.html">درباره ما</a> | <a href="contact.html">تماس با ما</a></p>
+        <p>© 2025 VPN پرسرعت</p>
+    </footer>
+    <script>
+        function toggleMenu() {
+            document.querySelector('.menu').classList.toggle('active');
+        }
+        function sendMessage() {
+            alert('پیام شما ارسال شد! تیم پشتیبانی به زودی با شما تماس می‌گیرد.');
+        }
+    </script>
+</body>
+</html>
